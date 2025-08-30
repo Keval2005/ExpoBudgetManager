@@ -169,7 +169,7 @@ const AccountsScreen = () => {
           <Text style={{color: '#0578eb'}}>₹{bankAccountBalance.toFixed(2)}</Text>
         </View>
 
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
@@ -190,7 +190,8 @@ const AccountsScreen = () => {
           }}>
           <Text>Card</Text>
           <Text>₹3550.00</Text>
-        </View>
+        </View> */}
+
       </View>
     </SafeAreaView>
   );
