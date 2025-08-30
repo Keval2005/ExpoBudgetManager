@@ -1,18 +1,12 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 import StackNavigator from './navigation/StackNavigator';
+import { NavigationContainer } from '@react-navigation/native';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs(['Each child in a list should have a unique "key" prop']);
 export default function App() {
   return (
-    <StackNavigator/>
+    <NavigationContainer>
+      <StackNavigator/>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
