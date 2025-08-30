@@ -2,16 +2,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config(); // Load .env file
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 app.use(cors({ origin: '*' }));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 mongoose
-  .connect('mongodb+srv://keval:keval@cluster0.ojrvau8.mongodb.net/')
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log('Connected to MongoDb');
   })
@@ -20,7 +24,7 @@ mongoose
   });
 
 app.listen(port, () => {
-  console.log('Server Running on port 8000');
+  console.log(`Server Running on port ${port}`);
 });
 
 const Expense = require('./models/expense');
