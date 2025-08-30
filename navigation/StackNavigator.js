@@ -137,9 +137,9 @@ const StackNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    //<NavigationContainer>
       <MainStack />
-    </NavigationContainer>
+    //</NavigationContainer>
   );
 };
 

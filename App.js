@@ -1,12 +1,16 @@
-import StackNavigator from './navigation/StackNavigator';
-import { NavigationContainer } from '@react-navigation/native';
-import { LogBox } from 'react-native';
+import StackNavigator from "./navigation/StackNavigator";
+import { NavigationContainer } from "@react-navigation/native";
+import { LogBox } from "react-native";
+import { ModalPortal } from 'react-native-modals';
 
 LogBox.ignoreLogs(['Each child in a list should have a unique "key" prop']);
 export default function App() {
   return (
     <NavigationContainer>
-      <StackNavigator/>
+      <>
+        <StackNavigator />
+        <ModalPortal />
+      </>
     </NavigationContainer>
   );
 }
