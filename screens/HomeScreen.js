@@ -14,9 +14,10 @@ import MaterialDesignIcons from "@react-native-vector-icons/material-design-icon
 import moment from "moment";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import axios from "axios";
-import { BottomModal } from "react-native-modals";
-import { SlideAnimation } from "react-native-modals";
-import { ModalContent } from "react-native-modals";
+import Modal from "react-native-modal";
+// import { BottomModal } from "react-native-modal";
+// import { SlideAnimation } from "react-native-modal";
+// import { ModalContent } from "react-native-modal";
 
 const HomeScreen = () => {
   const [option, setOption] = useState("Daily");
@@ -74,11 +75,11 @@ const HomeScreen = () => {
   };
 
   const totalIncome = expenses
-    ?.filter(expense => expense.type == 'Income')
+    ?.filter((expense) => expense.type == "Income")
     .reduce((total, expense) => total + parseFloat(expense.amount), 0);
 
   const totalExpense = expenses
-    .filter(expense => expense.type == 'Expense')
+    .filter((expense) => expense.type == "Expense")
     .reduce((total, expense) => total + parseFloat(expense.amount), 0);
 
   useFocusEffect(
@@ -213,7 +214,9 @@ const HomeScreen = () => {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+      <SafeAreaView
+        style={{ flex: 1, marginTop: 38, backgroundColor: "#F8F8F8" }}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -253,74 +256,6 @@ const HomeScreen = () => {
             size={30}
             color="black"
           />
-        </View>
-
-        <View
-          style={{
-            paddingTop: 15,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 12,
-            justifyContent: "space-between",
-            marginHorizontal: 10,
-            backgroundColor: "white",
-          }}
-        >
-          <Pressable onPress={() => setOption("Daily")}>
-            <Text
-              style={{
-                color: option == "Daily" ? "black" : "gray",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
-              Daily
-            </Text>
-          </Pressable>
-          <Pressable onPress={() => setOption("Calender")}>
-            <Text
-              style={{
-                color: option == "Calender" ? "black" : "gray",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
-              Calender
-            </Text>
-          </Pressable>
-          <Pressable onPress={() => setOption("Monthly")}>
-            <Text
-              style={{
-                color: option == "Monthly" ? "black" : "gray",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
-              Monthly
-            </Text>
-          </Pressable>
-          <Pressable onPress={() => setOption("Summary")}>
-            <Text
-              style={{
-                color: option == "Summary" ? "black" : "gray",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
-              Summary
-            </Text>
-          </Pressable>
-          <Pressable onPress={() => setOption("Description")}>
-            <Text
-              style={{
-                color: option == "Description" ? "black" : "gray",
-                fontSize: 14,
-                fontWeight: "500",
-              }}
-            >
-              Description
-            </Text>
-          </Pressable>
         </View>
 
         <View>
@@ -720,7 +655,7 @@ const HomeScreen = () => {
         </Pressable>
       </View>
 
-      <BottomModal
+      {/* <BottomModal
         swipeDirection={["up", "down"]}
         swipeThreshold={200}
         modalAnimation={
@@ -852,7 +787,7 @@ const HomeScreen = () => {
             )}
           </View>
         </ModalContent>
-      </BottomModal>
+      </BottomModal> */}
 
       {/* </SafeAreaView>
 
@@ -873,6 +808,136 @@ const HomeScreen = () => {
         </Pressable>
       </View>
     </> */}
+
+      <Modal
+        isVisible={modalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        onBackButtonPress={() => setModalVisible(false)}
+        style={{ margin: 0, justifyContent: "flex-end" }}
+      >
+        <View
+          style={{
+            width: "100%",
+            height: 450,
+            backgroundColor: "white",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            padding: 16,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
+            >
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>{day}</Text>
+              <View>
+                <Text style={{ color: "gray", fontSize: 9 }}>{monthYear}</Text>
+                <Text
+                  style={{
+                    backgroundColor: "#404040",
+                    borderRadius: 4,
+                    paddingHorizontal: 4,
+                    paddingVertical: 1,
+                    color: "white",
+                    fontSize: 10,
+                    alignSelf: "flex-start",
+                    marginTop: 3,
+                  }}
+                >
+                  {dayName}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 20 }}
+            >
+              <Text
+                style={{ color: "#0578eb", fontSize: 15, fontWeight: "500" }}
+              >
+                ₹ {currentData?.totalIncome.toFixed(2)}
+              </Text>
+              <Text
+                style={{ fontSize: 15, color: "#eb6105", fontWeight: "500" }}
+              >
+                ₹ {currentData?.totalExpense.toFixed(2)}
+              </Text>
+            </View>
+          </View>
+
+          {currentData?.dayExpenses?.length > 0 ? (
+            <View>
+              {currentData?.dayExpenses?.map((item, index) => (
+                <View key={index} style={{ marginTop: 18 }}>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 30,
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, color: "gray", minWidth: 70 }}>
+                      {item?.category}
+                    </Text>
+
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontSize: 14, color: "gray" }}>
+                        {item?.account}
+                      </Text>
+
+                      {item?.note && (
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            color: "gray",
+                            marginTop: 3,
+                          }}
+                        >
+                          {item?.note}
+                        </Text>
+                      )}
+                    </View>
+
+                    <Text
+                      style={{
+                        color: item?.type == "Expense" ? "#eb6105" : "#0578eb",
+                      }}
+                    >
+                      {Number(item?.amount).toFixed(2)}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 80,
+              }}
+            >
+              <Image
+                style={{ width: 80, height: 80 }}
+                source={{
+                  uri: "https://cdn-icons-png.flaticon.com/128/17597/17597096.png",
+                }}
+              />
+              <Text
+                style={{ textAlign: "center", color: "gray", marginTop: 10 }}
+              >
+                No Data available
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
     </>
   );
 };
