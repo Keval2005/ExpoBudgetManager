@@ -8,10 +8,8 @@ LogBox.ignoreLogs(['Each child in a list should have a unique "key" prop']);
 export default function App() {
   return (
     <NavigationContainer>
-      <>
         <StackNavigator />
         {/* <ModalPortal /> */}
-      </>
     </NavigationContainer>
   );
 }
