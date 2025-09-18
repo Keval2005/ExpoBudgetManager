@@ -68,7 +68,7 @@ const StackNavigator = () => {
           }}
         />
 
-        <Tab.Screen
+        {/* <Tab.Screen
           name="Accounts"
           component={AccountsScreen}
           options={{
@@ -90,7 +90,7 @@ const StackNavigator = () => {
                 />
               ),
           }}
-        />
+        /> */}
 
         <Tab.Screen
           name="Profile"
