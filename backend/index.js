@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // Load .env file
+require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -28,7 +28,7 @@ app.listen(port, () => {
 });
 
 const Expense = require('./models/expense');
-const User = require('./models/user')
+const Users = require('./models/user')
 
 app.post('/expenses', async (req, res) => {
   try {
@@ -67,17 +67,17 @@ app.post('/users', async (req, res) => {
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await Users.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
     // Create new user
-    const newUser = new User({
+    const newUser = new Users({
       name: username,
       email,
-      password, // Note: In production, hash the password before saving
-      currencyCode: currencyCode || 'INR', // Default to INR if not provided
+      password,
+      currencyCode: currencyCode || 'INR',
     });
 
     await newUser.save();
