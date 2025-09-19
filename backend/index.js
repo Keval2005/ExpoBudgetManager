@@ -28,6 +28,7 @@ app.listen(port, () => {
 });
 
 const Expense = require('./models/expense');
+const User = require('./models/user')
 
 app.post('/expenses', async (req, res) => {
   try {
@@ -52,6 +53,47 @@ app.post('/expenses', async (req, res) => {
   } catch (error) {
     console.log('Error creating expense', error);
     return res.status(500).json({message: 'Internal server error'});
+  }
+});
+
+// New endpoint to create a user
+app.post('/users', async (req, res) => {
+  try {
+    const { username, email, password, currencyCode } = req.body;
+
+    // Validate required fields
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: 'Name, email, and password are required' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists' });
+    }
+
+    // Create new user
+    const newUser = new User({
+      name: username,
+      email,
+      password, // Note: In production, hash the password before saving
+      currencyCode: currencyCode || 'INR', // Default to INR if not provided
+    });
+
+    await newUser.save();
+
+    res.status(201).json({
+      message: 'User created successfully',
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        currencyCode: newUser.currencyCode,
+      },
+    });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
