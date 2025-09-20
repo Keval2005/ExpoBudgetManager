@@ -34,7 +34,7 @@ app.post('/expenses', async (req, res) => {
   try {
     console.log('Received expense data:', req.body);
     
-    const { userId, type, account, category, amount, date, note, day, description } = req.body;
+    const { userId, type, account, category, amount, date, note, description } = req.body;
 
     if (!userId || !type || !account || !category || !amount) {
       console.log('Missing required fields:', { userId, type, account, category, amount });
@@ -51,7 +51,6 @@ app.post('/expenses', async (req, res) => {
       amount: parseFloat(amount), 
       date,
       note: note || '', 
-      day,
       description: description || '',
     });
 

@@ -13,10 +13,10 @@ const expenseSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-  day: {
-    type: String,
-    required: true,
-  },
+  // day: {
+  //   type: String,
+  //   required: true,
+  // },
   note: {
     type: String,
   },
