@@ -32,19 +32,30 @@ const Users = require('./models/user')
 
 app.post('/expenses', async (req, res) => {
   try {
-    const {type, account, category, amount, date, note, day} = req.body;
+    console.log('Received expense data:', req.body);
+    
+    const { userId, type, account, category, amount, date, note, day, description } = req.body;
+
+    if (!userId || !type || !account || !category || !amount) {
+      console.log('Missing required fields:', { userId, type, account, category, amount });
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const expenseUserId = typeof userId === 'string' ? userId : userId;
 
     const newExpense = new Expense({
-      userId,
+      userId: expenseUserId,
       type,
       account,
       category,
-      amount,
+      amount: parseFloat(amount), 
       date,
-      note,
+      note: note || '', 
       day,
+      description: description || '',
     });
 
+    console.log('Creating expense:', newExpense);
     await newExpense.save();
 
     res
@@ -52,27 +63,24 @@ app.post('/expenses', async (req, res) => {
       .json({message: 'Expense created Successfully', expense: newExpense});
   } catch (error) {
     console.log('Error creating expense', error);
-    return res.status(500).json({message: 'Internal server error'});
+    console.log('Error details:', error.message);
+    return res.status(500).json({message: 'Internal server error', error: error.message});
   }
 });
 
-// New endpoint to create a user
 app.post('/users', async (req, res) => {
   try {
     const { username, email, password, currencyCode } = req.body;
 
-    // Validate required fields
     if (!username || !email || !password) {
       return res.status(400).json({ message: 'Name, email, and password are required' });
     }
 
-    // Check if user already exists
     const existingUser = await Users.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User with this email already exists' });
     }
 
-    // Create new user
     const newUser = new Users({
       name: username,
       email,
@@ -99,10 +107,6 @@ app.post('/users', async (req, res) => {
 
 app.get('/expenses', async (req, res) => {
   try {
-    // const {date} = req.query;
-    // console.log('data', date);
-    // const expenses = await Expense.find({date: date});
-    // res.status(200).json(expenses);
     const { userId, date } = req.query;
     const query = { userId };
     if (date) query.date = date;

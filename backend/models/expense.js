@@ -4,7 +4,7 @@ const expenseSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true, // link expense to a user
+    required: true,
   },
   type: {
     type: String,
@@ -19,7 +19,6 @@ const expenseSchema = new mongoose.Schema({
   },
   note: {
     type: String,
-    required: true,
   },
   account: {
     type: String,
@@ -30,7 +29,7 @@ const expenseSchema = new mongoose.Schema({
     required: true,
   },
   amount: {
-    type: String,
+    type: Number,
     required: true,
   },
   date: {
