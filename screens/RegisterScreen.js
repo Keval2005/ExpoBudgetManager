@@ -2,31 +2,29 @@ import { Text, View, ScrollView, Image, Alert } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import images from "../constants/images";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import FormField from "../components/FormField";
 import { useState } from "react";
 import "../global.css";
-import { Link, router } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 
-import { useGlobalContext } from "../context/GlobalProvider";
 import CustomButton from "../components/CustomButton";
 
 const RegisterScreen = ({ navigation }) => {
-  //const { setUser, setIsLogged } = useGlobalContext();
 
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
-    currencyCode: "INR",
+    currencyCode: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreateUser = async () => {
     try {
-      // Validate form fields
+      
       if (!form.username || !form.email || !form.password || !form.currencyCode) {
         Alert.alert("Error", "All fields are required");
         return;
@@ -34,7 +32,7 @@ const RegisterScreen = ({ navigation }) => {
 
       setIsSubmitting(true);
 
-      // Prepare user data
+      
       const users = {
         username: form.username,
         email: form.email,
@@ -42,7 +40,6 @@ const RegisterScreen = ({ navigation }) => {
         currencyCode: form.currencyCode,
       };
 
-      // Send POST request to create user
       console.log("Sending request to create user:", users);
       const response = await axios.post(
         "https://expobudgetmanager.onrender.com/users",
@@ -55,19 +52,17 @@ const RegisterScreen = ({ navigation }) => {
       );
 
       console.log("User created:", response.data);
-      // Store userId in AsyncStorage
+      
       await AsyncStorage.setItem("userId", response.data.user._id);
-
-      // Reset form fields
+      
       setForm({
         username: "",
         email: "",
         password: "",
-        currencyCode: "INR",
+        currencyCode: "",
       });
 
-      // Navigate to Home screen (or Login if preferred)
-      navigation.replace("Home");
+      //navigation.replace("Main");
 
     } catch (error) {
       setIsSubmitting(false);
@@ -88,11 +83,7 @@ const RegisterScreen = ({ navigation }) => {
     <SafeAreaView className="bg-primary h-full justify-center">
       <ScrollView>
         <View className="justify-center w-full min-h-[83vh] px-5 my-6">
-          {/* <Image 
-            source={images.logoSmall}
-            resizeMode='contain'
-            className="w-14 h-14"
-          /> */}
+          
           <Text className="text-3xl py-1 text-emerald-500 text-bold mt-10 font-psemibold">
             Sign Up to Budget Manager
           </Text>
@@ -126,11 +117,11 @@ const RegisterScreen = ({ navigation }) => {
             <View className="w-full h-16 rounded-2xl border-2 border-blue-500">
               <Picker
                 selectedValue={form.role}
-                onValueChange={(value) => setForm({ ...form, role: value })}
+                onValueChange={(value) => setForm({ ...form, currencyCode: value })}
                 style={{ color: "#111827" }}
                 dropdownIconColor="#808080"
               >
-                <Picker.Item label="Rupees" value="" />
+                <Picker.Item label="Rupees" value="₹" />
                 <Picker.Item label="Dollor" value="$" />
               </Picker>
             </View>
@@ -147,7 +138,6 @@ const RegisterScreen = ({ navigation }) => {
             <Text className="text-lg font-pregular text-emerald-500">
               Have an account already?
             </Text>
-            {/* <Link href="/LoginScreen" className='font-psemibold text-lg text-secondary'>Sign In</Link> */}
             <Text
               style={{ fontSize: 15, paddingTop:3 ,color: "#60A5FA", fontWeight: "bold" }}
               onPress={() => navigation.navigate("Login")}
