@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { View, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Stack, Tabs, router, useRootNavigationState } from "expo-router";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import HomeScreen from "../screens/HomeScreen";
@@ -10,34 +9,54 @@ import StatsScreen from "../screens/StatsScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import CreateExpense from "../screens/CreateExpense";
 import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 
-const StackNavigator = () => {
-  const Stack = createNativeStackNavigator();
-  const Tab = createBottomTabNavigator();
-
+export default function RootLayout() {
   const [loading, setLoading] = useState(true);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const navigationState = useRootNavigationState();
 
   useEffect(() => {
     const checkUser = async () => {
-      const userId = await AsyncStorage.getItem("userId");
-      setUserLoggedIn(!!userId);
-      setLoading(false);
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        setUserLoggedIn(!!userId);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error checking user:", error);
+        setLoading(false);
+      }
     };
     checkUser();
   }, []);
 
-  function BottomTabs() {
+  useEffect(() => {
+    if (!navigationState?.key || loading) return;
+    if (userLoggedIn) {
+      router.push("/home");
+    } else {
+      router.push("/login");
+    }
+  }, [userLoggedIn, loading, navigationState?.key]);
+
+  if (loading || !navigationState?.key) {
     return (
-      <Tab.Navigator
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#E97451" />
+      </View>
+    );
+  }
+
+  return userLoggedIn ? (
+    <>
+      <Tabs
         screenOptions={{
           tabBarShowLabel: false,
           tabBarStyle: { height: 60 },
         }}
       >
-        <Tab.Screen
-          name="Home"
-          component={HomeScreen}
+        <Tabs.Screen
+          name="home"
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
@@ -48,11 +67,13 @@ const StackNavigator = () => {
                 color={focused ? "#E97451" : "#A0A0A0"}
               />
             ),
+            href: "/home",
           }}
-        />
-        <Tab.Screen
-          name="Stats"
-          component={StatsScreen}
+        >
+          {() => <HomeScreen />}
+        </Tabs.Screen>
+        <Tabs.Screen
+          name="stats"
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
@@ -63,11 +84,13 @@ const StackNavigator = () => {
                 color={focused ? "#E97451" : "#A0A0A0"}
               />
             ),
+            href: "/stats",
           }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
+        >
+          {() => <StatsScreen />}
+        </Tabs.Screen>
+        <Tabs.Screen
+          name="profile"
           options={{
             headerShown: false,
             tabBarIcon: ({ focused }) => (
@@ -78,47 +101,32 @@ const StackNavigator = () => {
                 color={focused ? "#E97451" : "#A0A0A0"}
               />
             ),
+            href: "/profile",
           }}
-        />
-      </Tab.Navigator>
-    );
-  }
-
-  function MainStack() {
-    return (
-      <Stack.Navigator>
-        {!userLoggedIn ? (
-          <Stack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-        ) : null}
-
+        >
+          {() => <ProfileScreen />}
+        </Tabs.Screen>
+      </Tabs>
+      <Stack>
         <Stack.Screen
-          name="Main"
-          component={BottomTabs}
+          name="create"
           options={{ headerShown: false }}
-        />
-
-        <Stack.Screen
-          name="Create"
           component={CreateExpense}
-          options={{ headerShown: false }}
         />
-      </Stack.Navigator>
-    );
-  }
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#E97451" />
-      </View>
-    );
-  }
-
-  return <MainStack />; // do NOT wrap with NavigationContainer here
-};
-
-export default StackNavigator;
+      </Stack>
+    </>
+  ) : (
+    <Stack>
+      <Stack.Screen
+        name="login"
+        options={{ headerShown: false }}
+        component={LoginScreen}
+      />
+      <Stack.Screen
+        name="register"
+        options={{ headerShown: false }}
+        component={RegisterScreen}
+      />
+    </Stack>
+  );
+}
